@@ -38,7 +38,7 @@ public class TimeManager {
                 .name("WhosThatPixelmon - Setting up timer for ChatGame").execute(
                         task -> {
                             try {
-                                ChatGameManager chatGameManager = new ChatGameManager();
+                                ChatGameManager chatGameManager = new ChatGameManager("random");
                                 chatGameManager.startChatGame();
                             } catch (IOException | URISyntaxException e) {
                                 e.printStackTrace();

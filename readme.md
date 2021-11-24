@@ -16,7 +16,7 @@ Make sure you have the dependencies [*RealMap*](https://ore.spongepowered.org/Er
 - Prevents players from keeping maps created.  
   
 ### Commands  
-`/whosthatpixelmon, /wtp start`  
+`/whosthatpixelmon, /wtp start {Pokemon's Sprite Index(not necessary)}`  
 Forces the chat game to start and resets the time elapsed towards the next instance  
 #### Permissions  
 `whosthatpixelmon.command.start`  

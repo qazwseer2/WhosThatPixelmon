@@ -30,14 +30,16 @@ public class ChatGameManager {
     private MapMaker mapMaker;
 
 
-    public ChatGameManager() throws IOException, URISyntaxException {
+    public ChatGameManager(String pokemon) throws IOException, URISyntaxException {
         this.mainClass = Whosthatpixelmon.getInstance();
-        mapMaker = new MapMaker();
+        mapMaker = new MapMaker(pokemon);
 
-        this.hiddenMap = mapMaker.getHiddenMap();
-        this.revealedMap = mapMaker.getRevealedMap();
-        this.pokemonName = mapMaker.getPokemonName();
-        this.pokemonForm = mapMaker.getPokemonForm();
+        this.hiddenMap = mapMaker.getHiddenMap(pokemon);
+        this.revealedMap = mapMaker.getRevealedMap(pokemon);
+        this.pokemonName = mapMaker.getPokemonName(pokemon);
+        String pokemonName = this.pokemonName;
+        this.pokemonForm = mapMaker.getPokemonForm(pokemon);
+        String pokemonForm = this.pokemonForm;
 
         playerManager = new PlayerManager(hiddenMap, revealedMap);
 
@@ -59,7 +61,7 @@ public class ChatGameManager {
                 .delay(5, TimeUnit.SECONDS)
                 .execute(() -> {
                     playerManager.sendPlayersHiddenMap();
-                    chatListener = new ChatListener(pokemonName, pokemonForm, chatGameManager);
+                    chatListener = new ChatListener(pokemonName, pokemonForm, chatGameManager); //Flabébé D:
                     Sponge.getEventManager().registerListeners(mainClass, chatListener);
                 }).submit(mainClass);
         //
@@ -160,5 +162,10 @@ public class ChatGameManager {
         mainClass.setTimeInterval();
         mapMaker.deleteSprite();
     }
-
+    public String getPokemonName() {
+        return pokemonName;
+    }
+    public String getPokemonForm() {
+        return pokemonForm;
+    }
 }

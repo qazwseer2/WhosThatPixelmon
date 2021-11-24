@@ -34,13 +34,13 @@ public class MapMaker {
     private Whosthatpixelmon mainClass;
 
 
-    public MapMaker() throws IOException, URISyntaxException {
+    public MapMaker(String pokemon) throws IOException, URISyntaxException {
         this.mainClass = Whosthatpixelmon.getInstance();
-        this.generateMapsAndDetails();
+        this.generateMapsAndDetails(pokemon);
     }
 
-    private void generateMapsAndDetails() throws IOException, URISyntaxException {
-        getRandomPokemon();
+    private void generateMapsAndDetails(String pokemon) throws IOException, URISyntaxException {
+        getRandomPokemon(pokemon);
 
         String dexNumber = fileName.substring(0, 3);
         try {
@@ -52,6 +52,7 @@ public class MapMaker {
 
         EnumSpecies enumPokemon = EnumSpecies.getFromDex(Integer.parseInt(dexNumber));
         pokemonName = enumPokemon.getLocalizedName();
+        pokemonName = pokemonName;
         //Fixes compound pokemon names, e.g. MrMime -> Mr Mime, without interrupting on hyphenated names
         //e.g. Porygon-Z
         final int pokemonNameLength = pokemonName.length();
@@ -61,6 +62,7 @@ public class MapMaker {
                 StringBuilder compoundNameBuilder = new StringBuilder(pokemonName.substring(0,i))
                         .append(" ").append(pokemonName.substring(i));
                 pokemonName = compoundNameBuilder.toString();
+                pokemonName = pokemonName;
                 break;
             }
         }
@@ -69,24 +71,41 @@ public class MapMaker {
         generateMaps();
     }
 
-    private void getRandomPokemon() throws IOException {
+    private void getRandomPokemon(String pokemon) throws IOException {
+        if (pokemon == "random") {
+            Asset fileNamesAsset = mainClass.getFileNamesAsset();
+            List<String> fileNames = fileNamesAsset.readLines();
+            Random rand = new Random();
+            String randomFile = fileNames.get(rand.nextInt(fileNames.size()));
+            Asset pokemonSpriteAsset = mainClass.getSpriteAsset(randomFile);
+            fileName = pokemonSpriteAsset.getFileName();
 
-        Asset fileNamesAsset = mainClass.getFileNamesAsset();
-        List<String> fileNames = fileNamesAsset.readLines();
-        Random rand = new Random();
-        String randomFile = fileNames.get(rand.nextInt(fileNames.size()));
-        Asset pokemonSpriteAsset = mainClass.getSpriteAsset(randomFile);
-        fileName = pokemonSpriteAsset.getFileName();
+            File spriteDirectory = new File("config/sprites");
+            if (!spriteDirectory.exists()) {
+                spriteDirectory.mkdirs();
+            }
+            pokemonSpriteAsset.copyToDirectory(spriteDirectory.toPath());
 
-        File spriteDirectory = new File("config/sprites");
-        if (!spriteDirectory.exists()) {
-            spriteDirectory.mkdirs();
+            String spritePath = new StringBuilder(spriteDirectory.getPath().toString())
+                    .append("/").append(fileName).toString();
+            chosenSprite = new File(spritePath);
+        } else {
+            Asset fileNamesAsset = mainClass.getFileNamesAsset();
+            List<String> fileNames = fileNamesAsset.readLines();
+            String randomFile = fileNames.get(Integer.parseInt(pokemon.trim()));
+            Asset pokemonSpriteAsset = mainClass.getSpriteAsset(randomFile);
+            fileName = pokemonSpriteAsset.getFileName();
+
+            File spriteDirectory = new File("config/sprites");
+            if (!spriteDirectory.exists()) {
+                spriteDirectory.mkdirs();
+            }
+            pokemonSpriteAsset.copyToDirectory(spriteDirectory.toPath());
+
+            String spritePath = new StringBuilder(spriteDirectory.getPath().toString())
+                    .append("/").append(fileName).toString();
+            chosenSprite = new File(spritePath);
         }
-        pokemonSpriteAsset.copyToDirectory(spriteDirectory.toPath());
-
-        String spritePath = new StringBuilder(spriteDirectory.getPath().toString())
-                .append("/").append(fileName).toString();
-        chosenSprite = new File(spritePath);
 
     }
 
@@ -163,19 +182,19 @@ public class MapMaker {
         }
     }
 
-    public ItemStack getHiddenMap() {
+    public ItemStack getHiddenMap(String pokemon) {
         return hiddenMap;
     }
 
-    public ItemStack getRevealedMap() {
+    public ItemStack getRevealedMap(String pokemon) {
         return revealedMap;
     }
 
-    public String getPokemonForm() {
+    public String getPokemonForm(String pokemon) {
         return pokemonForm;
     }
 
-    public String getPokemonName() {
+    public String getPokemonName(String pokemon) {
         return pokemonName;
     }
 }
